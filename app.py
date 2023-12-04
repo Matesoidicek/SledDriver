@@ -72,7 +72,11 @@ class Level:
         def move_forward(self):
             self.vel = min(self.vel + self.acceleration, self.max_vel)
             self.move()
-
+        
+        def move_backward(self):
+            self.vel = max(self.vel - self.acceleration,  - self.max_vel / 2)
+            self.move()
+        
         def move(self):
             radians = math.radians(self.angle)
             vertical = math.cos(radians) * self.vel
@@ -80,17 +84,48 @@ class Level:
 
             self.y -= vertical
             self.x -= horizontal
+            
+
 
 # ---------------------------------------------------------------- Player car class ----------------------------------------------------------------
     class PlayerSled(AbstractSled):
         IMG = SLED
         START_POS = (width // 2, height // 2)
 
+        def reduce_speed(self):
+            self.vel = max(self.vel - self.acceleration / 2, 0)
+            self.move()
+    
     def draw_game(self, screen, images, player_sled):
         for img, pos in images:
             screen.blit(img, pos)
 
         player_sled.draw(screen)
+
+
+    # ---------------------------------------------------------------- Move Player ----------------------------------------------------------------
+
+    def move_player(self, player_sled):
+        # Get keys to variable
+        keys = pygame.key.get_pressed()
+        # check if moving
+        moved = False
+
+        # Get input and react to it appropriately
+        if keys[pygame.K_w]:
+            moved = True
+            self.player_sled.move_forward()
+        if keys[pygame.K_s]:
+            moved = True
+            self.player_sled.move_backward()
+        if keys[pygame.K_a] and abs(player_sled.vel) > 0.5:#(keys[pygame.K_w] or keys[pygame.K_s]):
+            self.player_sled.rotate(left=True)
+        if keys[pygame.K_d] and abs(player_sled.vel) > 0.5:#(keys[pygame.K_w] or keys[pygame.K_s]):
+            self.player_sled.rotate(right=True)
+
+        if not moved:
+            
+            self.player_sled.reduce_speed()
 
     # Variables 
     player_sled = PlayerSled(4,4)
@@ -108,16 +143,12 @@ class Level:
     def run(self):
         self.draw_game(self.screen, self.images, self.player_sled)
 
-        # Get keys to variable
-        keys = pygame.key.get_pressed()
 
-        # Get input and react to it appropriately
-        if keys[pygame.K_w]:
-            self.player_sled.move_forward()
-        if keys[pygame.K_a]:
-            self.player_sled.rotate(left=True)
-        if keys[pygame.K_d]:
-            self.player_sled.rotate(right=True)
+        # Calling function move_player
+        self.move_player(self.player_sled)
+
+
+
 
 
 
