@@ -1,6 +1,7 @@
 import pygame
-import sys, math, Button, time
+import sys, math, time
 from utils import scale_image, blit_rotate_center
+from Button import Button
 
 # Global variables
 width, height = 1280, 720
@@ -13,6 +14,11 @@ PLAY_BUTTON = pygame.image.load('img/btn_play.png')
 OPTIONS_BUTTON = pygame.image.load('img/btn_options.png')
 SLED = pygame.image.load('img/sled.png')
 SLED = scale_image(SLED, 2)
+
+# Button pos variables
+# PLAY_POS = 
+# OPTION_POS = 
+EXIT_POS = Button(width // 2 - 137.5, height // 1.8, EXIT_BUTTON, 0.5)
 
 # ---------------------------------------------------------------- Game ----------------------------------------------------------------
 class Game:
@@ -47,6 +53,14 @@ class Game:
 
 
 class Level:
+    ##### ----- __init__ -----
+    def __init__(self, screen, gameStateManager):
+        self.screen = screen
+        self.gameStateManager = gameStateManager
+
+    ##### Variables 
+    images = [(BACKGROUND, (0,0))]
+
     # ---------------------------------------------------------------- Abstract sled & Player sled class ----------------------------------------------------------------
 
     class AbstractSled:
@@ -106,63 +120,56 @@ class Level:
     # ---------------------------------------------------------------- Move Player ----------------------------------------------------------------
 
     def move_player(self, player_sled):
-        # Get keys to variable
+        
+        ##### Get keys to variable
         keys = pygame.key.get_pressed()
-        # check if moving
+        
+        ##### check if moving
         moved = False
 
-        # Get input and react to it appropriately
+        ##### Get input and react to it appropriately
         if keys[pygame.K_w]:
             moved = True
             self.player_sled.move_forward()
         if keys[pygame.K_s]:
             moved = True
             self.player_sled.move_backward()
-        if keys[pygame.K_a] and abs(player_sled.vel) > 0.5:#(keys[pygame.K_w] or keys[pygame.K_s]):
+        if keys[pygame.K_a] and abs(player_sled.vel) > 0.2:
             self.player_sled.rotate(left=True)
-        if keys[pygame.K_d] and abs(player_sled.vel) > 0.5:#(keys[pygame.K_w] or keys[pygame.K_s]):
+        if keys[pygame.K_d] and abs(player_sled.vel) > 0.2:
             self.player_sled.rotate(right=True)
 
+        ##### If not moved for accelerating and decelerating
         if not moved:
-            
             self.player_sled.reduce_speed()
 
-    # Variables 
+    ###### Settings cls PlayerSled to variable for drawing it.
     player_sled = PlayerSled(4,4)
-    images = [(BACKGROUND, (0,0))]
-
-    # ----- __init__ -----
-    def __init__(self, screen, gameStateManager):
-        self.screen = screen
-        self.gameStateManager = gameStateManager
     
-
-
-    # ----- Main game loop-----
+    ##### ----- Main game loop-----
 
     def run(self):
+
+        ##### Drawing images with for loop
         self.draw_game(self.screen, self.images, self.player_sled)
 
-
-        # Calling function move_player
+        ##### Calling function move_player
         self.move_player(self.player_sled)
 
 
 
-
-
-
-
-
-
-
-
-# ---------------------------------------------------------------- Menu ----------------------------------------------------------------
+# ---------------------------------------------------------------- Menu Class ----------------------------------------------------------------
 
 
 class Start:
     
-    # ----- __INIT__ -----
+    # Easy image drawing
+    def draw_game(self, screen, images):
+        for img, pos in images:
+            screen.blit(img, pos)
+
+    images = []
+    ##### ----- __INIT__ -----
     def __init__(self, screen, gameStateManager):
         self.screen = screen
         self.gameStateManager = gameStateManager
@@ -174,16 +181,16 @@ class Start:
         self.screen.blit(BACKGROUND, (0,0))
 
         # Create buttons
-        play_btn = Button.Button(width // 2 - 137.5, height // 4, PLAY_BUTTON, 0.5)
-        options_btn = Button.Button(width // 2 - 137.5, height // 2.5, OPTIONS_BUTTON, 0.5)
-        exit_btn = Button.Button(width // 2 - 137.5, height // 1.8, EXIT_BUTTON, 0.5)
+        play_btn = Button(width // 2 - 137.5, height // 4, PLAY_BUTTON, 0.5)
+        options_btn = Button(width // 2 - 137.5, height // 2.5, OPTIONS_BUTTON, 0.5)
+        exit_btn = EXIT_POS
 
         # Main menu buttons
         if play_btn.draw(self.screen):
             self.gameStateManager.set_state('level')
         if options_btn.draw(self.screen):
             pass
-        if exit_btn.draw(self.screen):
+        if EXIT_POS.draw(self.screen):
             pygame.quit()
             sys.exit()
 
