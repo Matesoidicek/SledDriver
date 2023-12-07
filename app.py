@@ -16,9 +16,9 @@ SLED = pygame.image.load('img/sled.png')
 SLED = scale_image(SLED, 2)
 
 # Button pos variables
-# PLAY_POS = 
-# OPTION_POS = 
-EXIT_POS = Button(width // 2 - 137.5, height // 1.8, EXIT_BUTTON, 0.5)
+PLAY_BTN = Button(width // 2 - 137.5, height // 4, PLAY_BUTTON, 0.5)
+OPTION_BTN = Button(width // 2 - 137.5, height // 2.5, OPTIONS_BUTTON, 0.5)
+EXIT_BTN = Button(width // 2 - 137.5, height // 1.8, EXIT_BUTTON, 0.5)
 
 # ---------------------------------------------------------------- Game ----------------------------------------------------------------
 class Game:
@@ -162,37 +162,39 @@ class Level:
 
 
 class Start:
-    
-    # Easy image drawing
-    def draw_game(self, screen, images):
-        for img, pos in images:
-            screen.blit(img, pos)
+    ##### List for images to draw with def draw_game
+    images = [(BACKGROUND, (0,0))]
 
-    images = []
     ##### ----- __INIT__ -----
     def __init__(self, screen, gameStateManager):
         self.screen = screen
         self.gameStateManager = gameStateManager
 
-    #  Main menu loop
-    def run(self):
+    ##### Easy image drawing
+    def draw_game(self, screen, images):
+        for img, pos in images:
+            screen.blit(img, pos)
 
-        # Background
-        self.screen.blit(BACKGROUND, (0,0))
-
-        # Create buttons
-        play_btn = Button(width // 2 - 137.5, height // 4, PLAY_BUTTON, 0.5)
-        options_btn = Button(width // 2 - 137.5, height // 2.5, OPTIONS_BUTTON, 0.5)
-        exit_btn = EXIT_POS
-
-        # Main menu buttons
-        if play_btn.draw(self.screen):
+    ##### Main menu buttons
+    def Create_Buttons(self):
+        if PLAY_BTN.draw(self.screen):
             self.gameStateManager.set_state('level')
-        if options_btn.draw(self.screen):
+        if OPTION_BTN.draw(self.screen):
             pass
-        if EXIT_POS.draw(self.screen):
+        if EXIT_BTN.draw(self.screen):
             pygame.quit()
             sys.exit()
+
+    #####  Main menu loop
+    def run(self):
+        
+        ##### Easier image drawing
+        self.draw_game(self.screen, self.images)
+
+        ##### Creating Buttons trough def Create_Buttons
+        self.Create_Buttons()
+
+
 
 
 
