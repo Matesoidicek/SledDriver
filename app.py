@@ -7,7 +7,7 @@ from Button import Button
 width, height = 1280, 720
 FPS = 60
 pygame.init()
-
+health = 20
 
 ##### Map images
 LEVEL_BACKGROUND = pygame.image.load('img/background_with_border.png')
@@ -136,7 +136,6 @@ class Level:
 
         # Some fookin variables i dont give a single fuck xd
         IMG = SLED
-        health = 20
         START_POS = (width // 2, height // 2)
         
         ##### Reduce speed 
@@ -147,7 +146,9 @@ class Level:
         # Stop when collision :((
         def stop_collision(self):
             self.vel = -self.vel * 2
-            self.health = self.health - 1 
+            global health
+            health -= 1
+            print("Collision, now health is: ", health)
     
     ##### Draw game easy
     def draw_game(self, screen, images, player_sled):
@@ -198,7 +199,7 @@ class Level:
         ##### Calling function move_player
         self.move_player(self.player_sled)
         # SHIATT
-        text = self.font.render(f"{}", True, self.black)
+        text = self.font.render(f"Health: {health}", True, self.black)
         self.screen.blit(text, (100, 100))
 
         ##### collision detection
